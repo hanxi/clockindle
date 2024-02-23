@@ -254,8 +254,6 @@ function getLunar() {
 
 function weather() {
   if (!getCookie("qweatherKey")) {
-    document.getElementById("weaTitle").innerHTML =
-      "请刷新后点击右上角设置按钮填写 API Key～";
     return;
   }
   console.log("weather update");
@@ -418,11 +416,11 @@ function changeMode(pos) {
 }
 
 function changeTopMode() {
-  changeMode("top");
+  //changeMode("top");
 }
 
 function changeBottomMode() {
-  changeMode("bottom");
+  //changeMode("bottom");
 }
 
 function rotateScreen() {
@@ -463,8 +461,6 @@ function rotateScreen() {
 function changeBgMode() {
   console.log("# change background");
   var page = document.getElementsByClassName("page")[0];
-  var backdropClasses = document.getElementById("settings_backdrop").classList;
-  var settingsClasses = document.getElementById("settings_card").classList;
   var pageClasses = page.classList;
   bg_mode = bg_mode === BG_MODE.length - 1 ? 0 : bg_mode + 1;
   setCookie("bg_mode", bg_mode, 30);
@@ -480,11 +476,7 @@ function changeBgMode() {
     pageClasses.remove("light");
     pageClasses.add("dark");
 
-    backdropClasses.remove("backdrop_black");
-    backdropClasses.add("backdrop_white");
 
-    settingsClasses.remove("light");
-    settingsClasses.add("dark");
   } else if (bg_mode === 2) {
     // auto bg
     var date = new Date();
@@ -576,13 +568,4 @@ function addEvent(autoMode) {
   document.getElementById("top").addEventListener("click", changeTopMode);
   document.getElementById("bottom").addEventListener("click", changeBottomMode);
   document.getElementById("date").addEventListener("click", changeBgMode);
-  document
-    .getElementById("settings_icon")
-    .addEventListener("click", openSettingsDialog);
-  document
-    .getElementById("save_button")
-    .addEventListener("click", saveSettings);
-  document
-    .getElementById("settings_backdrop")
-    .addEventListener("click", closeSettingsDialog);
 }
