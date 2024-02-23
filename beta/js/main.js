@@ -82,10 +82,10 @@ var top_mode_default = 1; // 顶部组件默认序号，默认使用“一言”
 var bottom_mode_default = 1; // 底部组件默认序号，默认使用“天气”
 var bg_mode_default = 0; // 背景组件默认序号，默认使用白底
 var rotation_mode_default = 0; // 默认使用0-竖屏模式 0=0°，1=90°，2=180°，3=270°
-var hour24_default = false; // 默认使用十二小时制
+var hour24_default = true; // 默认使用十二小时制
 var bg_autoMode = false; // 黑白背景自动切换
 var weibo_num = 3; // 微博热搜条数
-var timezoneOffset = 0; // 时区偏移分钟
+var timezoneOffset = 8*60; // 时区偏移分钟
 var cIp = ""; // 客户端ip
 var city = ""; // 客户端所在城市
 var cityLocation = null; // 客户端经纬度信息
@@ -95,7 +95,7 @@ var top_mode = getCookie("top_mode"); // 顶部组件序号，默认使用“一
 var bottom_mode = getCookie("bottom_mode"); // 底部组件序号，默认使用“天气”
 var bg_mode = getCookie("bg_mode"); // 背景组件序号，默认使用白底
 var rotation_mode = getCookie("rotation_mode"); // 竖屏标识
-var hour24 = getCookie("hour24"); // 24小时制
+var hour24 = true;//getCookie("hour24"); // 24小时制
 
 // 模块缓存数据
 var hitokoto_data = null; // 一言缓存数据
@@ -176,7 +176,7 @@ function getIpInfo() {
       cityLocation = data.longitude + "," + data.latitude;
       cIp = data.ip;
       city = data.region;
-      timezoneOffset = parseInt(data.utc_offset || "+0800") * 0.6;
+      //timezoneOffset = parseInt(data.utc_offset || "+0800") * 0.6;
     }
   };
   xhr.send(null);
