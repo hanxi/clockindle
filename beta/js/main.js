@@ -5,7 +5,7 @@ window.onload = function () {
   getIpInfo();
   // 时钟模块
   clock(bg_autoMode);
-  time_timer = setInterval("clock(" + bg_autoMode + ")", 60 * 1000);
+  time_timer = setInterval("clock(" + bg_autoMode + ")", 1 * 1000);
 
   // rotation_mode 屏幕旋转标识
   if (rotation_mode !== "") {
@@ -53,10 +53,10 @@ window.onload = function () {
   }
 
   // 绑定12/24小时制切换、横/竖屏切换事件
-  addEvent(bg_autoMode); // autoMode
+  //addEvent(bg_autoMode); // autoMode
 
   // 三秒后隐藏设置图标
-  delayHiddenSetting();
+  //delayHiddenSetting();
 };
 
 // Keys
@@ -91,11 +91,11 @@ var city = ""; // 客户端所在城市
 var cityLocation = null; // 客户端经纬度信息
 
 // cookie变量
-var top_mode = getCookie("top_mode"); // 顶部组件序号，默认使用“一言”
-var bottom_mode = getCookie("bottom_mode"); // 底部组件序号，默认使用“天气”
-var bg_mode = getCookie("bg_mode"); // 背景组件序号，默认使用白底
-var rotation_mode = getCookie("rotation_mode"); // 竖屏标识
-var hour24 = true;//getCookie("hour24"); // 24小时制
+var top_mode = ""; // getCookie("top_mode"); // 顶部组件序号，默认使用“一言”
+var bottom_mode = ""; //  getCookie("bottom_mode"); // 底部组件序号，默认使用“天气”
+var bg_mode = ""; //  getCookie("bg_mode"); // 背景组件序号，默认使用白底
+var rotation_mode = ""; //  getCookie("rotation_mode"); // 竖屏标识
+var hour24 = "";//getCookie("hour24"); // 24小时制
 
 // 模块缓存数据
 var hitokoto_data = null; // 一言缓存数据
@@ -193,6 +193,7 @@ function clock(autoMode) {
   var day = date.getDay();
   var hour = date.getHours();
   var minutes = date.getMinutes();
+  var sec = date.getSeconds();
 
   // 深浅色模式标示
   var lightMode = true;
@@ -218,18 +219,7 @@ function clock(autoMode) {
   }
 
   // 24小時制
-  if (!hour24) {
-    var apm = "上<br>午";
-    if (hour > 12) {
-      apm = "下<br>午";
-      hour -= 12;
-    }
-    document.getElementById("apm").innerHTML = apm;
-  } else {
-    document.getElementById("apm").innerHTML = "";
-  }
-
-  var timeString = hour + ":" + ("0" + minutes).slice(-2);
+  var timeString = hour + ":" + ("0" + minutes).slice(-2) ; //+ ":" + ("0" + sec).slice(-2) ;
 
   document.getElementById("time").innerHTML = timeString;
 
@@ -240,7 +230,7 @@ function clock(autoMode) {
     var weekString = "星期" + weekList[day];
     document.getElementById("date").innerHTML = dateString + " " + weekString;
     // 获取农历日期及节假日
-    getLunar();
+    //getLunar();
   }
 }
 
