@@ -12,7 +12,6 @@ window.onload = function () {
     rotation_mode = Number(rotation_mode);
   } else {
     rotation_mode = rotation_mode_default;
-    setCookie("rotation_mode", rotation_mode, 30);
   }
   // 标识号退一再调用一次组件方法，实现组件的初始化
   rotation_mode = rotation_mode === 0 ? 3 : rotation_mode - 1;
@@ -22,14 +21,12 @@ window.onload = function () {
     hour24 = hour24 === "true" ? true : false;
   } else {
     hour24 = hour24_default;
-    setCookie("hour24", hour24, 30);
   }
   // 顶部组件序号
   if (top_mode !== "") {
     top_mode = Number(top_mode);
   } else {
     top_mode = top_mode_default;
-    setCookie("top_mode", top_mode, 30);
   }
   top_mode = top_mode === 0 ? TOP_MODE.length - 1 : top_mode - 1;
   changeTopMode();
@@ -38,7 +35,6 @@ window.onload = function () {
     bottom_mode = Number(bottom_mode);
   } else {
     bottom_mode = bottom_mode_default;
-    setCookie("bottom_mode", bottom_mode, 30);
   }
   bottom_mode = bottom_mode === 0 ? BOTTOM_MODE.length - 1 : bottom_mode - 1;
   changeBottomMode();
@@ -49,7 +45,6 @@ window.onload = function () {
     changeBgMode();
   } else {
     bg_mode = bg_mode_default;
-    setCookie("bg_mode", bg_mode, 30);
   }
 
   // 绑定12/24小时制切换、横/竖屏切换事件
@@ -61,13 +56,13 @@ window.onload = function () {
 
 // Keys
 var KEY_UNSPLASH = "bXwWoUhPeVw-yvSesGMgaOENnlSzhHYB43kZIQOR8cQ";
-var KEY_QWEATHER = getCookie("qweatherKey"); // "f3c3540923c24847b9f4d194888dbcef"; // https://console.qweather.com/#/apps
 
 // APIs
 var API_HITOKOTO = "https://v1.hitokoto.cn?encode=json&charset=utf-8";
 var API_IP_INFO = "https://ipapi.co/json?languages=zh-CN";
 var API_WEATHER = "https://devapi.qweather.com/v7/weather/now?";
 var API_WEIBO = "https://tenapi.cn/resou/";
+var API_WEATHER_URL = "https://www.mxnzp.com/api/weather/current/%E5%B9%BF%E5%B7%9E%E5%B8%82?app_id=kppnedfzmnzmkwpf&app_secret=a65ST5BSA5hOjUhYcpZv2ZGBb9Mbb45Y";
 
 // 组件容器
 // TODO 添加组件刷新频率
@@ -87,7 +82,7 @@ var bg_autoMode = false; // 黑白背景自动切换
 var weibo_num = 3; // 微博热搜条数
 var timezoneOffset = 8*60; // 时区偏移分钟
 var cIp = ""; // 客户端ip
-var city = ""; // 客户端所在城市
+var city = "广州"; // 客户端所在城市
 var cityLocation = null; // 客户端经纬度信息
 
 // cookie变量
@@ -175,7 +170,7 @@ function getIpInfo() {
       var data = JSON.parse(this.responseText);
       cityLocation = data.longitude + "," + data.latitude;
       cIp = data.ip;
-      city = data.region;
+      //city = data.region;
       //timezoneOffset = parseInt(data.utc_offset || "+0800") * 0.6;
     }
   };
@@ -235,60 +230,46 @@ function clock(autoMode) {
 }
 
 function getLunar() {
-  var lunar = calendar.solar2lunar();
-  document.getElementById("lunar").innerHTML =
-    lunar.gzYear + "年" + lunar.IMonthCn + lunar.IDayCn;
-  document.getElementById("holiday").innerHTML =
-    "&nbsp;&nbsp;" + (lunar.lunarFestival || "") + (lunar.festival || "");
+  //var lunar = calendar.solar2lunar();
+  //document.getElementById("lunar").innerHTML =
+  //  lunar.gzYear + "年" + lunar.IMonthCn + lunar.IDayCn;
+  //document.getElementById("holiday").innerHTML =
+  //  "&nbsp;&nbsp;" + (lunar.lunarFestival || "") + (lunar.festival || "");
 }
 
 function weather() {
-  if (!getCookie("qweatherKey")) {
-    return;
-  }
   console.log("weather update");
   var xhr = createXHR();
   xhr.open(
     "GET",
-    API_WEATHER + "key=" + KEY_QWEATHER + "&location=" + cityLocation,
+    API_WEATHER_URL,
     true
   );
   xhr.onreadystatechange = function () {
     if (this.readyState == 4) {
       var data = JSON.parse(this.responseText);
-      var wea_now = data.now;
-      if (data.code === "200") {
-        var img = "<i class=qi-" + wea_now.icon + "></i>";
+      console.log(data);
+      if (data.code === 1) {
+        var wea_now = data.data;
+        var weaImg = '<div>' + wea_now.weather + '</div>';
 
-        var weaImg = img + "<div>天气：" + wea_now.text + "</div>";
-
-        var weaTemp =
-          '<div class="tempNum">' +
+        var weaTemp = '<div class="tempNum">' +
           parseInt(wea_now.temp) +
-          '</div><div class="symbol">&#8451;</div>' +
-          "<div>当前气温</div>";
+          '</div><div class="symbol">&#8451;</div>';
 
         var weaInfo =
           "<div>" +
           city +
           "当前天气" +
           "</div>" +
-          "<div>体感温度：" +
-          wea_now.feelsLike +
-          "&#8451;</div>" +
           "<div>湿度：" +
           wea_now.humidity +
-          "%</div>" +
+          "</div>" +
           "<div>风向：" +
-          wea_now.windDir +
+          wea_now.windDirection +
           "</div>" +
           "<div>风速：" +
-          wea_now.windScale +
-          "级 " +
-          wea_now.windSpeed +
-          "km/h</div>" +
-          "<div>更新时间：" +
-          wea_now.obsTime.match(/T(.+)\+/)[1] +
+          wea_now.windPower +
           "</div>";
 
         document.getElementById("weaTitle").innerHTML = "";
@@ -297,8 +278,7 @@ function weather() {
         document.getElementById("weaInfo").innerHTML = weaInfo;
       } else {
         console.error("天气数据获取失败");
-        document.getElementById("weaTitle").innerHTML =
-          "数据获取失败，请检查 API Key～";
+        document.getElementById("weaTitle").innerHTML = "天气数据获取失败";
       }
     }
   };
@@ -383,7 +363,6 @@ function changeMode(pos) {
   pos_mode++;
   if (pos_mode === POS_MODE.length) pos_mode = 0;
   eval(pos + "_mode = pos_mode");
-  setCookie(pos + "_mode", pos_mode, 30);
 
   if (pos_mode !== 0) {
     if (!eval(POS_MODE[pos_mode] + "_data")) {
@@ -410,7 +389,7 @@ function changeTopMode() {
 }
 
 function changeBottomMode() {
-  //changeMode("bottom");
+  changeMode("bottom");
 }
 
 function rotateScreen() {
@@ -445,7 +424,6 @@ function rotateScreen() {
     page.style.height = h + "px";
   }
   rotation_mode = rotation_mode === 3 ? 0 : rotation_mode + 1;
-  setCookie("rotation_mode", rotation_mode, 30);
 }
 
 function changeBgMode() {
@@ -453,7 +431,6 @@ function changeBgMode() {
   var page = document.getElementsByClassName("page")[0];
   var pageClasses = page.classList;
   bg_mode = bg_mode === BG_MODE.length - 1 ? 0 : bg_mode + 1;
-  setCookie("bg_mode", bg_mode, 30);
   if (bg_mode === 0) {
     // light bg
     clearInterval(pic_timer);
@@ -537,7 +514,6 @@ function closeSettingsDialog() {
 function saveSettings() {
   const qweatherKey = document.getElementById("qweather_input").value;
   KEY_QWEATHER = qweatherKey;
-  setCookie("qweatherKey", qweatherKey, 360);
 
   closeSettingsDialog();
   window.location.reload();
@@ -549,7 +525,6 @@ function addEvent(autoMode) {
     .addEventListener("click", function () {
       console.log("hourCycle change");
       hour24 = !hour24;
-      setCookie("hour24", hour24, 30);
       clock(autoMode);
     });
   document
